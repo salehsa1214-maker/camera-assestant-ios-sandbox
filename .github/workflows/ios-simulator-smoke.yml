@@ -44,7 +44,7 @@ jobs:
           set -o pipefail
           chmod +x gradlew
           mkdir -p ../iosApp/build
-          ./gradlew :shared:compileKotlinIosSimulatorArm64 --stacktrace | tee ../iosApp/build/kotlin-native.log
+          ./gradlew :shared:compileKotlinIosSimulatorArm64 --stacktrace 2>&1 | tee ../iosApp/build/kotlin-native.log
 
       - name: Generate Xcode project and install Pods
         working-directory: iosApp
