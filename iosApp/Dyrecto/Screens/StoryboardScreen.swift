@@ -26,7 +26,7 @@ struct StoryboardScreen: View {
         let profiles = referenceState.session?.profiles ?? []
         let currentMatchId = referenceMatch.active ? referenceMatch.referenceId : nil
 
-        ScrollView {
+        return ScrollView {
             VStack(alignment: .leading, spacing: DyrectoSpacing.cardGap) {
                 ScreenHeader(title: "Storyboard", subtitle: "Organize the shots you want to capture.") {
                     HeaderIconButton(systemIcon: "questionmark.circle", onClick: { showHelp = true })
@@ -77,7 +77,7 @@ struct StoryboardScreen: View {
         }
     }
 
-    var body: some View {
+    private var presentedContent: some View {
         storyboardContent
         .background(DyrectoColor.surfaceBase)
         .toolbar(.hidden, for: .navigationBar) // owns its own large header (Android parity)
@@ -96,6 +96,10 @@ struct StoryboardScreen: View {
             isPresented: $showReplacePicker,
             selection: $replaceSelection,
             matching: .images)
+    }
+
+    var body: some View {
+        presentedContent
         .onChange(of: addSelection) { items in
             guard !items.isEmpty else { return }
             addSelection = []
