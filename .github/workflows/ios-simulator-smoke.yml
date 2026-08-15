@@ -79,6 +79,8 @@ jobs:
           APP_PATH="$(find build/DerivedData/Build/Products/Debug-iphonesimulator -maxdepth 1 -type d -name '*.app' -print -quit)"
           test -n "$APP_PATH"
           ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" Dyrecto-iOS-Simulator.zip
+          shasum -a 256 Dyrecto-iOS-Simulator.zip > build/Dyrecto-iOS-Simulator.zip.sha256
+          split -b 45m Dyrecto-iOS-Simulator.zip build/Dyrecto-iOS-Simulator.zip.part-
 
       - name: Upload simulator app
         uses: actions/upload-artifact@v4
@@ -111,6 +113,10 @@ jobs:
           printf '%s\n' "${GITHUB_RUN_ID}" > "$RESULT_DIR/run-id.txt"
           if [ -d iosApp/build ]; then
             find iosApp/build -maxdepth 1 -type f -name '*.log' -exec cp {} "$RESULT_DIR/" \;
+            find iosApp/build -maxdepth 1 -type f \( \
+              -name 'Dyrecto-iOS-Simulator.zip.sha256' -o \
+              -name 'Dyrecto-iOS-Simulator.zip.part-*' \
+            \) -exec cp {} "$RESULT_DIR/" \;
             if [ -f iosApp/build/DyrectoShared.h ]; then
               cp iosApp/build/DyrectoShared.h "$RESULT_DIR/"
             fi
