@@ -54,7 +54,7 @@ jobs:
         run: |
           set -o pipefail
           xcodegen generate | tee build/xcodegen.log
-          pod install --repo-update | tee build/pod-install.log
+          DYRECTO_SIMULATOR_SMOKE=1 pod install --repo-update 2>&1 | tee build/pod-install.log
           xcodebuild -workspace Dyrecto.xcworkspace -list 2>&1 | tee build/xcode-list.log
 
       - name: Build unsigned iOS Simulator app

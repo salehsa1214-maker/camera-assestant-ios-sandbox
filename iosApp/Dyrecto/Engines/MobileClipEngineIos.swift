@@ -1,6 +1,8 @@
 import Foundation
 import UIKit
+#if canImport(TensorFlowLite)
 import TensorFlowLite
+#endif
 import DyrectoShared
 
 /// iOS implementation of the shared `SemanticSceneEngine` — the Phase 16.1 MobileCLIP2-S0
@@ -16,6 +18,7 @@ import DyrectoShared
 ///  - Fail-safe: any missing/invalid/incompatible model or vocab latches FAILED and observe()
 ///    returns nil — the creative analyzer degrades to deterministic experts, import still works.
 ///  - Import-time only: never called per frame.
+#if canImport(TensorFlowLite)
 final class IosMobileClipEngine: SemanticSceneEngine {
 
     private static let modelId = "mobileclip2_s0"
@@ -164,3 +167,23 @@ final class IosMobileClipEngine: SemanticSceneEngine {
         return ok ? buffer : nil
     }
 }
+#else
+/// Simulator smoke-build fallback. MediaPipe already statically bundles TensorFlow Lite, so the
+/// standalone Swift wrapper is omitted there to avoid duplicate linker symbols. Semantic analysis
+/// is optional by contract and degrades to the deterministic experts when this returns nil.
+final class IosMobileClipEngine: SemanticSceneEngine {
+    var capability: AiCapability {
+        AiCapability(
+            modelId: "mobileclip2_s0",
+            status: .failed,
+            error: "MobileCLIP is disabled in the x86_64 simulator smoke build")
+    }
+
+    func observe(
+        bitmap: PlatformImage,
+        completionHandler: @escaping (SemanticObservation?, Error?) -> Void
+    ) {
+        completionHandler(nil, nil)
+    }
+}
+#endif

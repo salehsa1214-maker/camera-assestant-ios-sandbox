@@ -8,7 +8,9 @@ target 'Dyrecto' do
   pod 'MediaPipeTasksVision', '~> 0.10.14'
 
   # Phase 16.1 semantic expert: MobileCLIP2-S0 image tower via the TFLite/LiteRT interpreter.
-  pod 'TensorFlowLiteSwift', '~> 2.14.0'
+  # MediaPipeTasksVision statically bundles TFLite too, so linking both produces duplicate symbols
+  # in the x86_64 browser/simulator proof build. Real device builds keep MobileCLIP enabled.
+  pod 'TensorFlowLiteSwift', '~> 2.14.0' unless ENV['DYRECTO_SIMULATOR_SMOKE'] == '1'
 
   # SSH bootstrap: the FX3 offers keyboard-interactive ONLY; NMSSH (libssh2) supports it and
   # exposes the raw session for the two direct-tcpip PTP channels (SshTunnel.swift).
