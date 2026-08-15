@@ -82,7 +82,7 @@ final class MonitoringSessionIos: ObservableObject {
     private let semanticEngine = IosMobileClipEngine()
 
     /// Phase 9/10/15: Shot Reference / Storyboard monitor.
-    let referenceMonitor: ReferenceMonitorIos
+    private(set) var referenceMonitor: ReferenceMonitorIos!
 
     // ---- Alerts (one system, many producers — shared id source + delivery seam) ----
     private let alertIdGen = AlertIdGenerator()
@@ -170,13 +170,12 @@ final class MonitoringSessionIos: ObservableObject {
 
         // Phase 9/10/15/16.1: the reference monitor reads the newest SceneContext through a
         // provider (Android passes the StateFlow; the provider is the callback-world equivalent).
-        let monitor = ReferenceMonitorIos(
+        self.referenceMonitor = ReferenceMonitorIos(
             perception: perception,
             semanticEngine: semanticEngine,
             sceneContextProvider: { [weak self] in
                 self?.latestScene ?? initialScene
             })
-        self.referenceMonitor = monitor
 
         MonitoringSessionProviderIos.register(self)
         wire()
