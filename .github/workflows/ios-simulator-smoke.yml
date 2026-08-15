@@ -1,0 +1,120 @@
+name: iOS Simulator Smoke Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ios-cloud-sandbox
+
+permissions:
+  contents: write
+
+jobs:
+  build-ios-simulator:
+    runs-on: macos-14
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout sandbox
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 15.4
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install XcodeGen and CocoaPods
+        run: |
+          brew install xcodegen cocoapods
+          xcodegen --version
+          pod --version
+
+      - name: Compile Kotlin shared framework for iOS Simulator
+        working-directory: android
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          mkdir -p ../iosApp/build
+          ./gradlew :shared:compileKotlinIosSimulatorArm64 --stacktrace | tee ../iosApp/build/kotlin-native.log
+
+      - name: Generate Xcode project and install Pods
+        working-directory: iosApp
+        run: |
+          set -o pipefail
+          xcodegen generate | tee build/xcodegen.log
+          pod install --repo-update | tee build/pod-install.log
+
+      - name: Build unsigned iOS Simulator app
+        working-directory: iosApp
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -workspace Dyrecto.xcworkspace \
+            -scheme Dyrecto \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            build | tee build/xcodebuild.log
+
+      - name: Package simulator app
+        working-directory: iosApp
+        run: |
+          APP_PATH="$(find build/DerivedData/Build/Products/Debug-iphonesimulator -maxdepth 1 -type d -name '*.app' -print -quit)"
+          test -n "$APP_PATH"
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" Dyrecto-iOS-Simulator.zip
+
+      - name: Upload simulator app
+        uses: actions/upload-artifact@v4
+        with:
+          name: Dyrecto-iOS-Simulator
+          path: iosApp/Dyrecto-iOS-Simulator.zip
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-diagnostics
+          path: |
+            iosApp/build/xcodebuild.log
+            iosApp/Podfile.lock
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Publish sandbox diagnostics branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_RESULT: ${{ job.status }}
+        run: |
+          RESULT_DIR="$(mktemp -d)"
+          printf '%s\n' "$RUN_RESULT" > "$RESULT_DIR/status.txt"
+          printf '%s\n' "${GITHUB_SHA}" > "$RESULT_DIR/source-commit.txt"
+          printf '%s\n' "${GITHUB_RUN_ID}" > "$RESULT_DIR/run-id.txt"
+          if [ -d iosApp/build ]; then
+            find iosApp/build -maxdepth 1 -type f -name '*.log' -exec cp {} "$RESULT_DIR/" \;
+          fi
+          if [ -f iosApp/Podfile.lock ]; then
+            cp iosApp/Podfile.lock "$RESULT_DIR/"
+          fi
+          cd "$RESULT_DIR"
+          git init
+          git checkout -b ios-build-results
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "ci: publish iOS build diagnostics"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin ios-build-results

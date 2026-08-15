@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Join the camera's access point programmatically (WifiJoiner / NEHotspotConfiguration). -->
+	<key>com.apple.developer.networking.HotspotConfiguration</key>
+	<true/>
+	<!-- SSDP discovery sends UDP multicast; iOS 14+ gates this behind an Apple-granted
+	     entitlement (request at developer.apple.com — see README). The app degrades
+	     gracefully without it: discovery falls back to the camera's default gateway IP. -->
+	<key>com.apple.developer.networking.multicast</key>
+	<true/>
+</dict>
+</plist>

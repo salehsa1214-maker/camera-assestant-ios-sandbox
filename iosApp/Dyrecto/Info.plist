@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Dyrecto</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+
+	<!-- BLE: FX3 pairing flow (scan, CC17 credential read). -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Dyrecto talks to your Sony camera over Bluetooth to set up the connection and read its Wi-Fi and SSH credentials.</string>
+
+	<!-- PTP/IP + live view sockets to the camera on its own Wi-Fi network. -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Dyrecto streams live view and telemetry directly from your camera over the local network it creates.</string>
+
+	<!-- SSDP camera discovery (UDP multicast 239.255.255.250:1900). -->
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_ssdp._udp</string>
+	</array>
+
+	<!-- Monitoring continues with the screen locked: BLE link + spoken guidance. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+		<string>audio</string>
+	</array>
+
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+</dict>
+</plist>

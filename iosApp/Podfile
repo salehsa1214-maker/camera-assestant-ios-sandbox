@@ -1,0 +1,24 @@
+# CocoaPods deps that have no SPM distribution. Run `pod install` AFTER `xcodegen generate`.
+platform :ios, '16.0'
+
+target 'Dyrecto' do
+  use_frameworks!
+
+  # Phase 10 engines: object detection / image embedding / segmentation (bundled .tflite models).
+  pod 'MediaPipeTasksVision', '~> 0.10.14'
+
+  # Phase 16.1 semantic expert: MobileCLIP2-S0 image tower via the TFLite/LiteRT interpreter.
+  pod 'TensorFlowLiteSwift', '~> 2.14.0'
+
+  # SSH bootstrap: the FX3 offers keyboard-interactive ONLY; NMSSH (libssh2) supports it and
+  # exposes the raw session for the two direct-tcpip PTP channels (SshTunnel.swift).
+  pod 'NMSSH', '~> 2.3'
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |t|
+    t.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+    end
+  end
+end

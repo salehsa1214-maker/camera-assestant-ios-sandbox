@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Host theme for the single Activity. Actual UI colors come from the Compose
+      DyrectoTheme; this only needs to be a no-action-bar DayNight theme
+      so the splash/window background matches before Compose draws.
+    -->
+    <style name="Theme.Dyrecto" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+    </style>
+</resources>

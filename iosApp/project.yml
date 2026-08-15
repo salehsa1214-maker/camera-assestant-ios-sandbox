@@ -1,0 +1,47 @@
+# XcodeGen project definition — run `xcodegen generate` in this directory on macOS,
+# then `pod install`, then open Dyrecto.xcworkspace. See README.md for full bring-up.
+name: Dyrecto
+options:
+  bundleIdPrefix: app.dyrecto
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+    ENABLE_BITCODE: "NO"
+    # The KMP framework is built by the pre-build script into this per-config/sdk layout.
+    FRAMEWORK_SEARCH_PATHS: "$(inherited) $(SRCROOT)/../android/shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
+    OTHER_LDFLAGS: "$(inherited) -framework DyrectoShared"
+
+targets:
+  Dyrecto:
+    type: application
+    platform: iOS
+    sources:
+      - path: Dyrecto
+      # Shared ML/LUT assets — same files the Android app bundles (single source of truth).
+      - path: ../android/app/src/main/assets/models
+        type: folder
+        buildPhase: resources
+      - path: ../android/app/src/main/assets/creative/concept_vocab_mobileclip2_s0.json
+        buildPhase: resources
+      - path: ../android/app/src/main/assets/luts/1_SGamut3CineSLog3_To_LC-709.cube
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.dyrecto.ios
+        PRODUCT_NAME: Dyrecto
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_FILE: Dyrecto/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Dyrecto/Dyrecto.entitlements
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTS_MACCATALYST: "NO"
+    preBuildScripts:
+      - name: Build DyrectoShared (KMP)
+        script: |
+          cd "$SRCROOT/../android"
+          ./gradlew :shared:embedAndSignAppleFrameworkForXcode
+        basedOnDependencyAnalysis: false
