@@ -18,6 +18,7 @@ settings:
 
 schemes:
   Dyrecto:
+    shared: true
     build:
       targets:
         Dyrecto: all
