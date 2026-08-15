@@ -16,5 +16,5 @@ data class VisualEmbeddingResult(
     // FloatArray fields break generated equals/hashCode; identity comparison is fine here
     // (results are single-producer, single-slot), but make the contract explicit.
     override fun equals(other: Any?): Boolean = this === other
-    override fun hashCode(): Int = System.identityHashCode(this)
+    override fun hashCode(): Int = embedding.contentHashCode()
 }

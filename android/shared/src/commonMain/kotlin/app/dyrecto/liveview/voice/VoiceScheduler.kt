@@ -66,7 +66,6 @@ class VoiceScheduler(
     private val _debug = MutableStateFlow(VoiceDebugState())
     val debug: StateFlow<VoiceDebugState> = _debug.asStateFlow()
 
-    @Synchronized
     fun updateSettings(s: VoiceSettings) {
         if (s == settings) return
         settings = s
@@ -94,7 +93,6 @@ class VoiceScheduler(
      * everything matches / monitoring is off). [monitoringActive] distinguishes "all matched"
      * (announce once) from "monitoring stopped" (just go quiet).
      */
-    @Synchronized
     fun onAssistantInstruction(instruction: AssistantInstruction?, monitoringActive: Boolean) {
         val action = instruction?.action?.takeIf { it != AssistantAction.NONE }
         val text = action?.let { VoiceTemplates.forAction(it) }
@@ -165,7 +163,6 @@ class VoiceScheduler(
      * channel — it does not touch the continuous guidance session, obeys the assistant mute, and is
      * cooldown-floored so a burst of completions doesn't machine-gun.
      */
-    @Synchronized
     fun onShotCompleted() {
         if (!settings.allows(VoiceSource.ASSISTANT)) return
         val key = VoiceKey.ShotCompleted
@@ -185,7 +182,6 @@ class VoiceScheduler(
     }
 
     /** One alert from the existing delivery seam (already AlertConfig-gated upstream). */
-    @Synchronized
     fun onTelemetryAlert(alert: Alert) {
         val text = VoiceTemplates.forAlert(alert.type) ?: return // not a voiced type
         if (!settings.allows(VoiceSource.TELEMETRY)) {
@@ -217,7 +213,6 @@ class VoiceScheduler(
     }
 
     /** From the speech backend: the current utterance ran to completion (or failed). */
-    @Synchronized
     fun onUtteranceFinished() {
         if (speaking == null) return // stale callback after stop()/reset()
         speaking = null
@@ -226,14 +221,12 @@ class VoiceScheduler(
     }
 
     /** From the owner's timer: the minimum speech gap requested earlier has elapsed. */
-    @Synchronized
     fun onGapElapsed() {
         gapRecheckScheduled = false
         maybeSpeakNext()
     }
 
     /** New session / disconnect: silence everything and forget all voice state. */
-    @Synchronized
     fun reset() {
         stopSpeaking()
         queue.clear()

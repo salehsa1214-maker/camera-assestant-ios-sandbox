@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package app.dyrecto.ios
 
 import app.dyrecto.liveview.veric.VericFrameRef

@@ -33,7 +33,7 @@ data class SemanticObservation(
     // Identity-based equals/hashCode are meaningless for a FloatArray field; this type is only ever
     // compared by reference in practice. Explicit overrides silence the array-in-data-class warning.
     override fun equals(other: Any?): Boolean = this === other
-    override fun hashCode(): Int = System.identityHashCode(this)
+    override fun hashCode(): Int = embedding?.contentHashCode() ?: 0
 }
 
 /**

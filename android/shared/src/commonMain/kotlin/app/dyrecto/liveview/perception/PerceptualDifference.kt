@@ -1,6 +1,7 @@
 package app.dyrecto.liveview.perception
 
 import kotlin.math.abs
+import kotlin.math.pow
 
 /**
  * Declarative noticeability curve — pure data, interpreted by [PerceptualDifference.applyCurve].
@@ -46,7 +47,7 @@ object PerceptualDifference {
             CurveSpec.CurveType.LINEAR -> x
             CurveSpec.CurveType.SMOOTHSTEP -> x * x * (3f - 2f * x)
             CurveSpec.CurveType.POWER -> {
-                if (curve.gamma <= 0f) x else Math.pow(x.toDouble(), curve.gamma.toDouble()).toFloat()
+                if (curve.gamma <= 0f) x else x.toDouble().pow(curve.gamma.toDouble()).toFloat()
             }
             CurveSpec.CurveType.PIECEWISE -> piecewise(x, curve.breakpoints)
         }.coerceIn(0f, 1f)

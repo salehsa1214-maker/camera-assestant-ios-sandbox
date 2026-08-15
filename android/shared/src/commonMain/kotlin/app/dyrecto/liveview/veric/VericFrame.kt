@@ -23,21 +23,21 @@ package app.dyrecto.liveview.veric
  */
 class VericFrameRef(
     /** 0-based emission order within this parser's lifetime. */
-    @JvmField val index: Int,
+    val index: Int,
     /** Wall-clock at emission. The stream may carry a PTS inside [headerLength]; not pinned yet. */
-    @JvmField val timestampMs: Long,
+    val timestampMs: Long,
     /** Absolute byte offset of the JPEG SOI within the whole stream. */
-    @JvmField val streamOffset: Long,
+    val streamOffset: Long,
     /** The parser buffer. Borrowed — valid only during the emitting callback. Do not retain. */
-    @JvmField val buf: ByteArray,
+    val buf: ByteArray,
     /** Offset of `FFD8` (SOI) within [buf]. */
-    @JvmField val jpegOffset: Int,
+    val jpegOffset: Int,
     /** Length of the JPEG, SOI..EOI inclusive. */
-    @JvmField val jpegLength: Int,
+    val jpegLength: Int,
     /** Offset of the opaque header (bytes preceding the SOI for this envelope) within [buf]. */
-    @JvmField val headerOffset: Int,
+    val headerOffset: Int,
     /** Length of the opaque header (includes the "VERIC" magic). */
-    @JvmField val headerLength: Int,
+    val headerLength: Int,
 ) {
     /** Copies the borrowed slices into a retainable [VericFrame]. Use off the runtime hot path. */
     fun materialize(): VericFrame = VericFrame(

@@ -1,6 +1,7 @@
 package app.dyrecto.liveview.exposure
 
 import app.dyrecto.liveview.vision.results.HistogramResult
+import kotlin.math.ceil
 
 /**
  * Builds the canonical 256-bin luma histogram and exposure statistics from a shared [LumaField]
@@ -66,7 +67,7 @@ class HistogramEngine(private val moduleId: String = "exposure") {
     /** Smallest bin index whose cumulative count reaches [fraction] of [total]. 0 when empty. */
     private fun percentileBin(bins: IntArray, total: Int, fraction: Float): Int {
         if (total <= 0) return 0
-        val target = Math.ceil(total.toDouble() * fraction).toLong().coerceAtLeast(1L)
+        val target = ceil(total.toDouble() * fraction).toLong().coerceAtLeast(1L)
         var cum = 0L
         var b = 0
         while (b < BIN_COUNT) {
