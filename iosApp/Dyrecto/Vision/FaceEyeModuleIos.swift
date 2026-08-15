@@ -22,7 +22,7 @@ final class FaceEyeModule: VisionModuleIos {
     private static let confidence: Float = 0.8 // Android CONFIDENCE parity
     private static let eyeRadius = 10          // Android EYE_RADIUS parity (px)
 
-    func analyze(_ request: FrameAnalysisRequestIos) throws -> [VisionResult] {
+    func analyze(_ request: FrameAnalysisRequestIos) throws -> [DyrectoShared.VisionResult] {
         let startMs = SharedFactory.nowMs()
         let (faceResult, eyeResult) = try Self.detect(
             cgImage: request.cgImage,

@@ -63,7 +63,7 @@ final class AlertConfigStoreIos: ObservableObject {
 final class VoiceSettingsStoreIos: ObservableObject {
 
     @Published private(set) var settings = VoiceSettings(
-        enabled: false, mode: VoiceMode.all, speechRate: VoiceSpeechRate.normal,
+        enabled: false, mode: VoiceMode.both, speechRate: VoiceSpeechRate.normal,
         assistantReminderSeconds: 3)
 
     private let defaults = UserDefaults.standard
@@ -79,7 +79,7 @@ final class VoiceSettingsStoreIos: ObservableObject {
 
     func reload() {
         let def = VoiceSettings(
-            enabled: false, mode: VoiceMode.all, speechRate: VoiceSpeechRate.normal,
+            enabled: false, mode: VoiceMode.both, speechRate: VoiceSpeechRate.normal,
             assistantReminderSeconds: 3)
         let enabled = defaults.object(forKey: Keys.enabled) as? Bool ?? def.enabled
         let mode = defaults.string(forKey: Keys.mode)

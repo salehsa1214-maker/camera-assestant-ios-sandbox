@@ -53,7 +53,7 @@ final class ReferenceMonitorIos: ObservableObject {
     private var embeddings: [String: ReferenceEmbedding] = [:]
     private var perceptionEngines: [String: HumanPerceptionEngine] = [:]
     private var stateMachines: [String: ReferenceStateMachine] = [:]
-    private var completionRuntime: [String: StoryboardCompletionRuntime] = [:]
+    private var completionRuntime: [String: StoryboardCompletion.Runtime] = [:]
 
     /// The Current Match shot id last synced to live perception (repoint only when it changes).
     private var lastWinnerId: String?
@@ -209,7 +209,7 @@ final class ReferenceMonitorIos: ObservableObject {
         for profile in session.profiles {
             let above = profile.id == winnerId && aboveThreshold
             let runtime = completionRuntime[profile.id]
-                ?? StoryboardCompletionRuntime(holdStartMs: nil, streakConfirmed: false)
+                ?? StoryboardCompletion.Runtime(holdStartMs: nil, streakConfirmed: false)
             let update = StoryboardCompletion.shared.update(
                 completion: profile.completion, runtime: runtime,
                 aboveThreshold: above, nowMs: nowMs, rule: rule)
@@ -558,9 +558,9 @@ final class ReferenceMonitorIos: ObservableObject {
            nowMs - s.analyzedAtMs <= ReferenceConfig.shared.AI_STALE_AFTER_MS {
             snapshot = s
         }
-        var expected: SubjectMatcherExpected?
+        var expected: SubjectMatcher.Expected?
         if let ai, let box = ai.primarySubjectBox {
-            expected = SubjectMatcherExpected(
+            expected = SubjectMatcher.Expected(
                 category: ai.primarySubjectCategory,
                 boundingBox: box,
                 rawLabel: ai.primarySubjectRawLabel,
@@ -586,13 +586,13 @@ final class ReferenceMonitorIos: ObservableObject {
     private func syncPerception(target: ReferenceProfile?) {
         guard let coordinator = perception else { return }
         let monitoring = currentState.monitoringRequested
-        var expected: SubjectMatcherExpected?
+        var expected: SubjectMatcher.Expected?
         if let ai = target?.ai, let box = ai.primarySubjectBox {
             switch ai.primarySubjectType {
             case .none, .unknown, .multiple:
                 expected = nil
             default:
-                expected = SubjectMatcherExpected(
+                expected = SubjectMatcher.Expected(
                     category: ai.primarySubjectCategory,
                     boundingBox: box,
                     rawLabel: ai.primarySubjectRawLabel,

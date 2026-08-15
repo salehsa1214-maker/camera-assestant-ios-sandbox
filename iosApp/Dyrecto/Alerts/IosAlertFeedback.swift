@@ -16,7 +16,7 @@ import DyrectoShared
 final class IosAlertFeedback: AlertFeedback {
 
     private let playingFlow = MutableStateFlowBox(initial: false)
-    var playing: Kotlinx_coroutines_coreStateFlow { playingFlow.flow }
+    var playing: StateFlow { playingFlow.flow }
 
     private let queue = DispatchQueue(label: "app.dyrecto.alertfeedback")
     private var isPlaying = false
@@ -98,10 +98,10 @@ final class IosAlertFeedback: AlertFeedback {
 /// publication (constructed via the shared AlertStore-style factory pattern is unnecessary —
 /// kotlinx exposes the constructor through the exported coroutines API).
 final class MutableStateFlowBox {
-    let flow: Kotlinx_coroutines_coreMutableStateFlow
+    let flow: MutableStateFlow
 
     init(initial: Bool) {
-        flow = StateFlowFactoryKt.mutableStateFlow(initial: KotlinBoolean(bool: initial))
+        flow = StateFlowFactoryKt.mutableStateFlow(initial: initial)
     }
 
     func set(_ value: Bool) {

@@ -308,7 +308,7 @@ let allAlertCategories: [AlertCategory] = [
     .recording, .battery, .media, .thermal, .connection, .exposure, .face, .reference,
 ]
 let allVoiceSpeechRates: [VoiceSpeechRate] = [.slow, .normal, .fast]
-let allAnalysisColorSpaces: [AnalysisColorSpace] = [.auto, .rec709, .sLog3]
+let allAnalysisColorSpaces: [AnalysisColorSpace] = [.auto_, .rec709, .sLog3]
 let allReferenceSignals: [ReferenceSignal] = [
     .exposure, .subjectPosition, .subjectSize, .whiteBalance, .headroom,
     .facePresence, .eyeVisibility, .subjectPresence, .composition, .visualSimilarity,

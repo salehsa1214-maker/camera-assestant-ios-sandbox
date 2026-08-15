@@ -10,10 +10,7 @@ import DyrectoShared
 /// read — see Fx3BleManager).
 final class CameraConnectionController: ObservableObject {
 
-    @Published private(set) var state = CameraConnectionState(
-        phase: .idle, bleStatus: nil, sshStatus: nil, ptpStatus: nil, deviceInfo: nil,
-        telemetry: nil, timeline: [], lastTelemetryUpdateAt: nil, fatalError: nil,
-        lastSuccessfulCommunicationAt: nil)
+    @Published private(set) var state = IosFactoriesKt.emptyCameraConnectionState()
 
     let ble = Fx3BleManager()
     private let wifi = WifiJoiner()
@@ -51,19 +48,21 @@ final class CameraConnectionController: ObservableObject {
     private func setPhase(_ phase: ConnectionPhase) {
         log.line(.conn, "phase → \(phase)")
         update { $0.doCopy(
-            phase: phase, bleStatus: $0.bleStatus, sshStatus: $0.sshStatus,
-            ptpStatus: $0.ptpStatus, deviceInfo: $0.deviceInfo, telemetry: $0.telemetry,
-            timeline: $0.timeline, lastTelemetryUpdateAt: $0.lastTelemetryUpdateAt,
-            fatalError: nil, lastSuccessfulCommunicationAt: $0.lastSuccessfulCommunicationAt) }
+            phase: phase, running: $0.running, ble: $0.ble, ssh: $0.ssh,
+            ptp: $0.ptp, deviceInfo: $0.deviceInfo, telemetry: $0.telemetry,
+            timeline: $0.timeline, lastSuccessfulCommunicationAt: $0.lastSuccessfulCommunicationAt,
+            lastTelemetryUpdateAt: $0.lastTelemetryUpdateAt, fatalError: nil,
+            wifiCredentialsFailed: $0.wifiCredentialsFailed, discoveredCameraIp: $0.discoveredCameraIp) }
     }
 
     private func fail(_ message: String) {
         log.line(.error, "connection failed: \(message)")
         update { $0.doCopy(
-            phase: .error, bleStatus: $0.bleStatus, sshStatus: $0.sshStatus,
-            ptpStatus: $0.ptpStatus, deviceInfo: $0.deviceInfo, telemetry: $0.telemetry,
-            timeline: $0.timeline, lastTelemetryUpdateAt: $0.lastTelemetryUpdateAt,
-            fatalError: message, lastSuccessfulCommunicationAt: $0.lastSuccessfulCommunicationAt) }
+            phase: .error, running: false, ble: $0.ble, ssh: $0.ssh,
+            ptp: $0.ptp, deviceInfo: $0.deviceInfo, telemetry: $0.telemetry,
+            timeline: $0.timeline, lastSuccessfulCommunicationAt: $0.lastSuccessfulCommunicationAt,
+            lastTelemetryUpdateAt: $0.lastTelemetryUpdateAt, fatalError: message,
+            wifiCredentialsFailed: $0.wifiCredentialsFailed, discoveredCameraIp: $0.discoveredCameraIp) }
     }
 
     // MARK: Public intents
@@ -211,10 +210,11 @@ final class CameraConnectionController: ObservableObject {
                     merged = telemetry
                 }
                 return s.doCopy(
-                    phase: s.phase, bleStatus: s.bleStatus, sshStatus: s.sshStatus,
-                    ptpStatus: s.ptpStatus, deviceInfo: s.deviceInfo, telemetry: merged,
-                    timeline: s.timeline, lastTelemetryUpdateAt: now,
-                    fatalError: s.fatalError, lastSuccessfulCommunicationAt: now)
+                    phase: s.phase, running: s.running, ble: s.ble, ssh: s.ssh,
+                    ptp: s.ptp, deviceInfo: s.deviceInfo, telemetry: merged,
+                    timeline: s.timeline, lastSuccessfulCommunicationAt: now,
+                    lastTelemetryUpdateAt: now, fatalError: s.fatalError,
+                    wifiCredentialsFailed: s.wifiCredentialsFailed, discoveredCameraIp: s.discoveredCameraIp)
             }
             self.onTelemetry?(telemetry)
         }
@@ -247,10 +247,11 @@ final class CameraConnectionController: ObservableObject {
         let telemetry = Self.toDomain(bootstrap.telemetry)
         let now = KotlinLong(value: Int64(Date().timeIntervalSince1970 * 1000))
         update { s in s.doCopy(
-            phase: s.phase, bleStatus: s.bleStatus, sshStatus: s.sshStatus,
-            ptpStatus: s.ptpStatus, deviceInfo: deviceInfo, telemetry: telemetry,
-            timeline: s.timeline, lastTelemetryUpdateAt: now, fatalError: nil,
-            lastSuccessfulCommunicationAt: now) }
+            phase: s.phase, running: s.running, ble: s.ble, ssh: s.ssh,
+            ptp: s.ptp, deviceInfo: deviceInfo, telemetry: telemetry,
+            timeline: s.timeline, lastSuccessfulCommunicationAt: now,
+            lastTelemetryUpdateAt: now, fatalError: nil,
+            wifiCredentialsFailed: s.wifiCredentialsFailed, discoveredCameraIp: s.discoveredCameraIp) }
         onTelemetry?(telemetry)
     }
 

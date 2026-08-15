@@ -127,7 +127,7 @@ final class AiPerceptionCoordinator: ObservableObject {
     /// Deactivating clears live evidence.
     // interop: Kotlin nested class SubjectMatcher.Expected exports flattened as
     // SubjectMatcherExpected.
-    func setLiveMonitoring(expected: SubjectMatcherExpected?, active: Bool) {
+    func setLiveMonitoring(expected: SubjectMatcher.Expected?, active: Bool) {
         lane.async {
             self.tracking.expectSubject(expected: expected)
             self.stateLock.lock()
