@@ -44,7 +44,10 @@ jobs:
           set -o pipefail
           chmod +x gradlew
           mkdir -p ../iosApp/build
-          ./gradlew :shared:compileKotlinIosX64 --stacktrace 2>&1 | tee ../iosApp/build/kotlin-native.log
+          ./gradlew :shared:compileKotlinIosX64 :shared:linkDebugFrameworkIosX64 --stacktrace 2>&1 | tee ../iosApp/build/kotlin-native.log
+          SHARED_HEADER="$(find shared/build -type f -name 'DyrectoShared.h' -print -quit)"
+          test -n "$SHARED_HEADER"
+          cp "$SHARED_HEADER" ../iosApp/build/DyrectoShared.h
 
       - name: Generate Xcode project and install Pods
         working-directory: iosApp
@@ -108,6 +111,9 @@ jobs:
           printf '%s\n' "${GITHUB_RUN_ID}" > "$RESULT_DIR/run-id.txt"
           if [ -d iosApp/build ]; then
             find iosApp/build -maxdepth 1 -type f -name '*.log' -exec cp {} "$RESULT_DIR/" \;
+            if [ -f iosApp/build/DyrectoShared.h ]; then
+              cp iosApp/build/DyrectoShared.h "$RESULT_DIR/"
+            fi
           fi
           if [ -f iosApp/Podfile.lock ]; then
             cp iosApp/Podfile.lock "$RESULT_DIR/"
