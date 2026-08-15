@@ -38,13 +38,13 @@ jobs:
           xcodegen --version
           pod --version
 
-      - name: Compile Kotlin shared framework for iOS Simulator
+      - name: Compile Kotlin shared framework for x86 iOS Simulator
         working-directory: android
         run: |
           set -o pipefail
           chmod +x gradlew
           mkdir -p ../iosApp/build
-          ./gradlew :shared:compileKotlinIosSimulatorArm64 --stacktrace 2>&1 | tee ../iosApp/build/kotlin-native.log
+          ./gradlew :shared:compileKotlinIosX64 --stacktrace 2>&1 | tee ../iosApp/build/kotlin-native.log
 
       - name: Generate Xcode project and install Pods
         working-directory: iosApp
@@ -66,6 +66,8 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build/DerivedData \
             CODE_SIGNING_ALLOWED=NO \
+            ARCHS=x86_64 \
+            ONLY_ACTIVE_ARCH=YES \
             build 2>&1 | tee build/xcodebuild.log
 
       - name: Package simulator app
