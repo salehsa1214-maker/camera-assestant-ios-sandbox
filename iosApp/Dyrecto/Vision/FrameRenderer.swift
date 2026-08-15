@@ -247,7 +247,7 @@ final class LiveViewFrameRenderer: ObservableObject {
         guard active else { return }
         // Zero-copy contract: materialize the JPEG bytes NOW, before the parser reuses its
         // buffer — via the iosMain bulk bridge (ONE native copy; never per-byte get(index:)).
-        let jpeg = VericInteropKt.jpegNSData(ref) as Data
+        let jpeg = ref.jpegNSData() as Data
         submitJpeg(jpeg)
     }
 
@@ -422,8 +422,8 @@ extension Data {
     // JPEG-sized (tens of KB) exception to the "no per-element bridging" rule until a bulk
     // toNSData bridge is added to shared iosMain (verify cost on first Mac profile).
     init(kotlinBytes: KotlinByteArray, offset: Int, length: Int) {
-        var bytes = [UInt8](repeating: 0, count: max(length, 0))
-        for i in 0..<max(length, 0) {
+        var bytes = [UInt8](repeating: 0, count: Swift.max(length, 0))
+        for i in 0..<Swift.max(length, 0) {
             bytes[i] = UInt8(bitPattern: kotlinBytes.get(index: Int32(offset + i)))
         }
         self.init(bytes)
