@@ -16,6 +16,22 @@ settings:
     FRAMEWORK_SEARCH_PATHS: "$(inherited) $(SRCROOT)/../android/shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
     OTHER_LDFLAGS: "$(inherited) -framework DyrectoShared"
 
+schemes:
+  Dyrecto:
+    build:
+      targets:
+        Dyrecto: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+
 targets:
   Dyrecto:
     type: application
