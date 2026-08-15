@@ -65,7 +65,7 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath build/DerivedData \
             CODE_SIGNING_ALLOWED=NO \
-            build | tee build/xcodebuild.log
+            build 2>&1 | tee build/xcodebuild.log
 
       - name: Package simulator app
         working-directory: iosApp
