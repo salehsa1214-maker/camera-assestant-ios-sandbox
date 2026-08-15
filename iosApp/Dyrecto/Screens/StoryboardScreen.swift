@@ -77,11 +77,15 @@ struct StoryboardScreen: View {
         }
     }
 
-    private var presentedContent: some View {
+    private var baseContent: some View {
         storyboardContent
         .background(DyrectoColor.surfaceBase)
         .toolbar(.hidden, for: .navigationBar) // owns its own large header (Android parity)
         .infoDialog($infoDialog)
+    }
+
+    private var helpContent: some View {
+        baseContent
         .alert("Storyboard", isPresented: $showHelp) {
             Button("Got it", role: .cancel) {}
         } message: {
@@ -92,6 +96,10 @@ struct StoryboardScreen: View {
                  "matching shot for each frame and tracks your progress until every planned " +
                  "shot is captured.")
         }
+    }
+
+    private var presentedContent: some View {
+        helpContent
         .photosPicker(
             isPresented: $showReplacePicker,
             selection: $replaceSelection,
