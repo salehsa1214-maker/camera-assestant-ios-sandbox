@@ -1,0 +1,24 @@
+PODS:
+  - MediaPipeTasksCommon (0.10.35)
+  - MediaPipeTasksVision (0.10.35):
+    - MediaPipeTasksCommon (= 0.10.35)
+  - NMSSH (2.3.1)
+
+DEPENDENCIES:
+  - MediaPipeTasksVision (~> 0.10.14)
+  - NMSSH (~> 2.3)
+
+SPEC REPOS:
+  trunk:
+    - MediaPipeTasksCommon
+    - MediaPipeTasksVision
+    - NMSSH
+
+SPEC CHECKSUMS:
+  MediaPipeTasksCommon: ae27d88c4d185db114a1a768c504f8270dda79b5
+  MediaPipeTasksVision: 1d6c3efa89830a131dbd0dc4fb80dea283fac521
+  NMSSH: cd689ae535a1581a6dd9fd4600ff71247df510a6
+
+PODFILE CHECKSUM: 9586f5baae8ceafec9bacc7134d195c644809a90
+
+COCOAPODS: 1.16.2

@@ -1,0 +1,12 @@
+Updating local specs repositories
+Adding spec repo `trunk` with CDN `https://cdn.cocoapods.org/`
+Analyzing dependencies
+Downloading dependencies
+Installing MediaPipeTasksCommon (0.10.35)
+Installing MediaPipeTasksVision (0.10.35)
+Installing NMSSH (2.3.1)
+Generating Pods project
+Integrating client project
+
+[!] Please close any current Xcode sessions and use `Dyrecto.xcworkspace` for this project from now on.
+Pod installation complete! There are 2 dependencies from the Podfile and 3 total pods installed.

@@ -1,0 +1,14 @@
+Command line invocation:
+    /Applications/Xcode_16.2.app/Contents/Developer/usr/bin/xcodebuild -workspace Dyrecto.xcworkspace -list
+
+User defaults from command line:
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Information about workspace "Dyrecto":
+    Schemes:
+        Dyrecto
+        MediaPipeTasksCommon
+        MediaPipeTasksVision
+        NMSSH
+        Pods-Dyrecto
+
