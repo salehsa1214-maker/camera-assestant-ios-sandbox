@@ -10,6 +10,16 @@ import DyrectoShared
 struct StoryboardScreen: View {
     @ObservedObject var session: MonitoringSessionIos
 
+    private static let helpMessage = """
+    1. Add the shots you want to capture.
+
+    2. The assistant analyzes each on-device.
+
+    3. Choose what to monitor and how strict the match should be.
+
+    4. Start monitoring — while the camera streams, the assistant picks the best matching shot for each frame and tracks your progress until every planned shot is captured.
+    """
+
     @State private var showHelp = false
     @State private var infoDialog: InfoDialogContent? = nil
     // Add supports selecting MULTIPLE images at once; each becomes a new storyboard shot.
@@ -86,15 +96,11 @@ struct StoryboardScreen: View {
 
     private var helpContent: some View {
         baseContent
-        .alert("Storyboard", isPresented: $showHelp) {
-            Button("Got it", role: .cancel) {}
-        } message: {
-            Text("1. Add the shots you want to capture.\n\n" +
-                 "2. The assistant analyzes each on-device.\n\n" +
-                 "3. Choose what to monitor and how strict the match should be.\n\n" +
-                 "4. Start monitoring — while the camera streams, the assistant picks the best " +
-                 "matching shot for each frame and tracks your progress until every planned " +
-                 "shot is captured.")
+        .alert(isPresented: $showHelp) {
+            Alert(
+                title: Text("Storyboard"),
+                message: Text(Self.helpMessage),
+                dismissButton: .cancel(Text("Got it")))
         }
     }
 
