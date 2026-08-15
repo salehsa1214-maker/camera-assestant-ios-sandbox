@@ -19,7 +19,7 @@ struct StoryboardScreen: View {
     @State private var replaceSelection: PhotosPickerItem? = nil
     @State private var showReplacePicker = false
 
-    var body: some View {
+    private var storyboardContent: some View {
         let referenceState = session.referenceState
         let referenceMatch = session.referenceMatch
         let profile = referenceState.profile
@@ -75,6 +75,10 @@ struct StoryboardScreen: View {
             .padding(.top, 12)
             .padding(.bottom, DyrectoSpacing.bottomInset)
         }
+    }
+
+    var body: some View {
+        storyboardContent
         .background(DyrectoColor.surfaceBase)
         .toolbar(.hidden, for: .navigationBar) // owns its own large header (Android parity)
         .infoDialog($infoDialog)
@@ -768,7 +772,7 @@ private struct WhatToMonitorCard: View {
     var body: some View {
         let referenceState = session.referenceState
         let profile = referenceState.profile
-        let options = profile?.options ?? ReferenceMonitorOptions()
+        let options = profile?.options ?? SharedFactory.defaultMonitorOptions()
         let hasSubject = profile?.subject != nil
         let ai = profile?.ai
         let strategy = ai?.strategy ?? .humanStrategy
@@ -952,7 +956,7 @@ private struct MatchingStrictnessCard: View {
     @ObservedObject var session: MonitoringSessionIos
 
     var body: some View {
-        let options = session.referenceState.profile?.options ?? ReferenceMonitorOptions()
+        let options = session.referenceState.profile?.options ?? SharedFactory.defaultMonitorOptions()
         let enabled = session.referenceState.profile != nil
         let ordered: [(ReferenceTolerance, String, String)] = [
             (.loose, "Loose", "More flexible"),

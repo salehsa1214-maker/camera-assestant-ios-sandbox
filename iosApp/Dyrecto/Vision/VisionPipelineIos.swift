@@ -239,6 +239,7 @@ final class VisionPipeline: ObservableObject {
             histogram: histogram, zebra: zebra, exposure: exposure,
             faces: faces, eyes: eyes, colorStats: colorStats,
             aiScene: aiScene, subjectExposure: subjectExposure,
+            waveform: nil, falseColor: nil, focusPeaking: nil,
             updatedAtMs: Int64(Date().timeIntervalSince1970 * 1000))
         latestContext = ctx
         DispatchQueue.main.async { self.visionContext = ctx }
@@ -310,7 +311,7 @@ final class ExposureVisionModule: VisionModuleIos {
     private let module = IosExposureModule()
 
     func analyze(_ request: FrameAnalysisRequestIos) throws -> [VisionResult] {
-        module.analyze(rgbaData: request.rgba,
+        module.analyze(rgbaData: request.rgba as Data,
                        width: Int32(request.width),
                        height: Int32(request.height))
     }
@@ -326,7 +327,8 @@ enum SharedFactory {
     static func emptyVisionContext() -> VisionContext {
         VisionContext(
             histogram: nil, zebra: nil, exposure: nil, faces: nil, eyes: nil,
-            colorStats: nil, aiScene: nil, subjectExposure: nil, updatedAtMs: 0)
+            colorStats: nil, aiScene: nil, subjectExposure: nil,
+            waveform: nil, falseColor: nil, focusPeaking: nil, updatedAtMs: 0)
     }
 
     static func emptyFrameContext() -> FrameContext {

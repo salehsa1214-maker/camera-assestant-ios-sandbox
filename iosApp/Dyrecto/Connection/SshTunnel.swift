@@ -42,7 +42,7 @@ final class SshTunnel {
     /// blocking PtpByteChannel. Uses the raw libssh2 session NMSSH exposes, because NMSSH's
     /// high-level channel types don't cover direct-tcpip.
     func openPtpChannel() throws -> PtpByteChannel {
-        guard let raw = session.rawSession else { throw SshError.noRawSession }
+        guard let raw = session.session else { throw SshError.noRawSession }
         guard let channel = libssh2_channel_direct_tcpip_ex(
             raw, "127.0.0.1", Int32(PtpIpClient.ptpPort), "127.0.0.1", 0) else {
             throw SshError.channelOpenFailed(lastError())
@@ -57,7 +57,7 @@ final class SshTunnel {
     }
 
     private func lastError() -> String {
-        guard let raw = session.rawSession else { return "?" }
+        guard let raw = session.session else { return "?" }
         var msg: UnsafeMutablePointer<CChar>? = nil
         var len: Int32 = 0
         libssh2_session_last_error(raw, &msg, &len, 0)
@@ -110,7 +110,7 @@ final class SshByteChannel: PtpByteChannel {
         }
         // Non-blocking mode so reads can honor deadlines.
         sessionLock.lock()
-        if let raw = session.rawSession { libssh2_session_set_blocking(raw, 0) }
+        if let raw = session.session { libssh2_session_set_blocking(raw, 0) }
         sessionLock.unlock()
     }
 

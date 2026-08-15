@@ -229,7 +229,8 @@ final class ReferenceMonitorIos: ObservableObject {
                 imageUri: profile.imageUri, width: profile.width, height: profile.height,
                 exposure: profile.exposure, color: profile.color, subject: profile.subject,
                 face: profile.face, options: profile.options, ai: profile.ai,
-                creativeScene: profile.creativeScene, completion: completion)
+                creativeScene: profile.creativeScene, completion: completion,
+                cameraSettings: profile.cameraSettings)
         }
         let updated = current.doCopy(
             id: current.id, name: current.name, createdAtMs: current.createdAtMs,

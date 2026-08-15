@@ -269,7 +269,7 @@ private struct PictureProfileCard: View {
 /// "S_LOG3" → "S-Log3" — user-friendly labels for the color-space segments.
 func colorSpaceDisplayLabel(_ space: AnalysisColorSpace) -> String {
     switch space {
-    case .auto: return "Auto"
+    case .auto_: return "Auto"
     case .rec709: return "Rec.709"
     case .sLog3: return "S-Log3"
     default: return space.name

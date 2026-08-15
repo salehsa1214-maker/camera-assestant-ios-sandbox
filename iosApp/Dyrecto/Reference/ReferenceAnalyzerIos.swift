@@ -56,7 +56,7 @@ final class ReferenceAnalyzerIos {
 
         // ---- Exposure scan (fresh module; same code path as live frames) ----
         let exposureResults = exposureModule.analyze(
-            rgbaData: extracted.data, width: Int32(width), height: Int32(height))
+            rgbaData: extracted.data as Data, width: Int32(width), height: Int32(height))
 
         // ---- Face pass (fresh Vision-framework pass; same conversion as the live module) ----
         let (faces, eyes) = try FaceEyeModule.detect(
@@ -115,7 +115,7 @@ final class ReferenceAnalyzerIos {
         if let box = subjectRegionBox {
             // Bulk ARGB read through the shared Kotlin conversion loop (no per-pixel bridging).
             let framePixels = RgbaFramePixels.companion.fromNSData(
-                data: extracted.data, width: Int32(width), height: Int32(height))
+                data: extracted.data as Data, width: Int32(width), height: Int32(height))
             let argb = KotlinIntArray(size: Int32(width * height))
             framePixels.readArgb(dest: argb)
             subjectExposureStats = RegionLumaStats.shared.compute(
@@ -123,7 +123,9 @@ final class ReferenceAnalyzerIos {
                 region: AnalysisRegion(left: box.left, top: box.top,
                                        right: box.right, bottom: box.bottom),
                 stride: 1,
-                transform: ExposureConfig.shared.resolveTransform())
+                transform: ExposureConfig.shared.resolveTransform(),
+                highlightLumaMin: AnalysisRegionRegistry.shared.highlightLumaMin,
+                shadowLumaMax: AnalysisRegionRegistry.shared.shadowLumaMax)
         }
 
         let exposureProfile = ReferenceExposureProfile(
@@ -176,7 +178,8 @@ final class ReferenceAnalyzerIos {
             options: options,
             ai: aiProfile,
             creativeScene: creativeScene,
-            completion: SharedFactory.emptyShotCompletion())
+            completion: SharedFactory.emptyShotCompletion(),
+            cameraSettings: nil)
         return ReferenceAnalysisIos(profile: profile, embedding: embedding)
     }
 
